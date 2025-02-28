@@ -66,7 +66,7 @@ def generate_state_from_file(file_name, goal=False):
     n = len(file_state)
     total_blocks = n*n
 
-    grid = grid = [[color_abbreviation[color] for color in row] for row in file_state]
+    grid = [[color_abbreviation[color] for color in row] for row in file_state]
     return grid
 
 
@@ -191,45 +191,7 @@ class Puzzle:
         return possible_moves
     
     def __lt__(self, other):
-        return (self.path_cost + self.manhattanHeuristic()) < (other.path_cost + other.manhattanHeuristic())
-
-    def manhattanHeuristic(self):
-
-        def manhattan_distance(pos1, pos2):
-            return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
-
-        def flatten(lst):
-            return [item for sublist in lst for item in sublist]
-
-        current_positions = {color: [] for color in set(flatten(self.puzzle))}
-        goal_positions = {color: [] for color in set(flatten(self.goal_state))}
-
-        for i in range(self.size - 2):
-            for j in range(self.size - 2):
-                current_color = self.puzzle[i + 1][j + 1]
-                goal_color = self.goal_state[i][j]
-                if current_color != '' and goal_color != '':
-                    goal_positions[goal_color].append((i + 1, j + 1))
-
-        for i in range(self.size):
-            for j in range(self.size):
-                current_color = self.puzzle[i][j]
-                if current_color == "black":
-                    continue
-                current_positions[current_color].append((i, j))
-        count = 0
-        for color in current_positions:
-            if color not in goal_positions:
-                continue
-            current_color_positions = current_positions[color]
-            goal_color_positions = goal_positions[color]
-
-            for goal_pos in goal_color_positions:
-                distance = []
-                for current_pos in current_color_positions:
-                    heapq.heappush(distance, manhattan_distance(current_pos, goal_pos))
-                count += heapq.heappop(distance)
-        return count
+        return (self.path_cost + self.numberOfMisplacedHeuristic()) < (other.path_cost + other.numberOfMisplacedHeuristic())
     
     def numberOfMisplacedHeuristic(self):
         heuristic_value = (self.size - 2) * (self.size - 2)
